@@ -10,7 +10,7 @@ public class IngredientRequirement
 [CreateAssetMenu(fileName = "FoodData", menuName = "Data/Food", order = 0)]
 public class FoodData : ScriptableObject
 {
-    public int ID;
+    public string ID;
     public string Name;
     public List<IngredientRequirement> IngredientsRequired;
     public int EnergyUse;

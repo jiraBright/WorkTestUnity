@@ -671,7 +671,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1403914880}
-  - component: {fileID: 1403914881}
+  - component: {fileID: 1403914882}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -694,7 +694,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1403914881
+--- !u!114 &1403914882
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -703,12 +703,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1403914879}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e17f2ca529f423542b5ea1969834d595, type: 3}
+  m_Script: {fileID: 11500000, guid: d16454754f7a64545a71d6047b7c1650, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IngredientsInventory: []
   FoodsInventory: []
-  Energy: 100
+  CurrentEnergy: 100
+  maxEnergy: 100
+  ingredientDatas:
+  - {fileID: 11400000, guid: 2bc69870927ff3542962ef0cf95224f2, type: 2}
+  - {fileID: 11400000, guid: 350554652d3e8d3498901473b3f077da, type: 2}
+  - {fileID: 11400000, guid: 41dec5db26907e34189f7fa9ebaae8ad, type: 2}
+  - {fileID: 11400000, guid: 64befbcb0e2092a4cb3cc7779079e576, type: 2}
+  - {fileID: 11400000, guid: 97077fdd0ded99b41a33aa47156422f9, type: 2}
+  foodDatas:
+  - {fileID: 11400000, guid: f2522428b4d53a148902e529960ea528, type: 2}
+  - {fileID: 11400000, guid: 17170207257fe2547bcff6f73ff1eea1, type: 2}
+  - {fileID: 11400000, guid: 5cd7adc8a2d357249a654b88b925c6d8, type: 2}
+  - {fileID: 11400000, guid: ed269619bd98c9e4498a582e1563e6be, type: 2}
+  - {fileID: 11400000, guid: 058ea142d2421d84caee76477a2c22f7, type: 2}
 --- !u!1 &1582967675
 GameObject:
   m_ObjectHideFlags: 0
