@@ -19,7 +19,7 @@ public class GameManager : PlayerInventory
     private DateTime dateTimeLogout;
     private void Start()
     {
-        InitializeDictionary();
+        InitializeDataDictionary();
         InitializeCookingTable();
 
         StartCoroutine(RefillEnergyRoutine());
@@ -52,7 +52,7 @@ public class GameManager : PlayerInventory
         cookingTable.playerInventory = this;
     }
 
-    private void InitializeDictionary()
+    private void InitializeDataDictionary()
     {
         AddIngredeintToDict();
         AddFoodToDict();
