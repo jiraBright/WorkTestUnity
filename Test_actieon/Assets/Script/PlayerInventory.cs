@@ -63,8 +63,8 @@ public class PlayerInventory : MonoBehaviour
             var item = IngredientsInventory.Find(i => i.Data.ID == req.ingredient.ID);
             if (item != null)
             {
+                Debug.Log($"req ingre : {item.Data.name}");
                 item.Amount -= req.amount;
-                break;
             }
         }
     }
@@ -72,9 +72,10 @@ public class PlayerInventory : MonoBehaviour
     #endregion
 
     #region Energy
-    private void AddEnergy()
+    private void AddEnergy(int amount)
     {
-        CurrentEnergy = Mathf.Clamp(CurrentEnergy + refillEnergyAmount, 0, maxEnergy);
+        CurrentEnergy = Mathf.Clamp(CurrentEnergy + amount, 0, maxEnergy);
+        Debug.Log($"Current energy is: {CurrentEnergy}");
     }
 
     public bool UseEnergy(int amount)
@@ -94,7 +95,7 @@ public class PlayerInventory : MonoBehaviour
             yield return new WaitForSeconds(refillEnergyRate);
             if (CurrentEnergy < maxEnergy)
             {
-                AddEnergy();
+                AddEnergy(refillEnergyAmount);
             }
         }
     }
