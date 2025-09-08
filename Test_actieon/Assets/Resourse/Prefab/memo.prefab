@@ -92,10 +92,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 33.05
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 5499438319056877062}
   - component: {fileID: 4453489248216185757}
   - component: {fileID: 7570737023369268308}
+  - component: {fileID: 258704352379839364}
   m_Layer: 5
   m_Name: memo
   m_TagString: Untagged
@@ -172,7 +173,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 221, y: 0}
+  m_SizeDelta: {x: 221, y: 255}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5499438319056877062
 CanvasRenderer:
@@ -238,6 +239,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &258704352379839364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2987484656186989826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 861bceb1dcb2ec64886d5edc224632b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IngredientRequireAmount: {fileID: 3094723883664790031}
+  IngredientImage: {fileID: 4714156490778874679}
 --- !u!1 &5154999755001923849
 GameObject:
   m_ObjectHideFlags: 0

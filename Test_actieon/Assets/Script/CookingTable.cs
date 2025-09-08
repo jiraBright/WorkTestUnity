@@ -17,7 +17,7 @@ public class CookingTable : MonoBehaviour
                 return;
             }
         }
-        
+
         if (!playerInventory.HasIngredients(food.IngredientsRequired))
         {
             Debug.Log("Not enough ingredients for " + food.Name);
