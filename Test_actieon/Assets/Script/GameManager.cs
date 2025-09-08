@@ -1,12 +1,32 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class GameManager : PlayerInventory
 {
+    [Header("Datas")]
     [SerializeField] private List<IngredientData> ingredientDatas;
     [SerializeField] private List<FoodData> foodDatas;
 
+    [Header("UI panel")]
+    [SerializeField] private GameObject cookingPanel;
+    private CookingTable cookingTable;
+
+    private Dictionary<string, IngredientData> ingredientDataDict;
+    private Dictionary<string, FoodData> foodDataDict;
+    
+    private DateTime dateTimeLogin;
+    private DateTime dateTimeLogout;
+    private void Start()
+    {
+        InitializeDictionary();
+        InitializeCookingTable();
+
+        StartCoroutine(RefillEnergyRoutine());
+        dateTimeLogin = DateTime.Now;
+        Debug.Log(dateTimeLogin);
+    }
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
@@ -18,42 +38,66 @@ public class GameManager : PlayerInventory
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            AddFood(GetFoodByID("1"), 1);
+            cookingTable.CookFood(GetFoodByID("bun"));
         }
     }
-    private IngredientData GetIngredientByID(string id)
+    
+    private void InitializeCookingTable()
     {
-        IngredientData pickIngredient = ingredientDatas.First();
-        for (int i = 0; i < ingredientDatas.Count; i++)
+        cookingTable = GetComponent<CookingTable>();
+        if (!cookingTable)
         {
-            if (ingredientDatas[i].ID == id)
+            cookingTable = gameObject.AddComponent<CookingTable>();
+        }
+        cookingTable.playerInventory = this;
+    }
+
+    private void InitializeDictionary()
+    {
+        AddIngredeintToDict();
+        AddFoodToDict();
+    }
+
+    private void AddIngredeintToDict()
+    {
+        ingredientDataDict = new Dictionary<string, IngredientData>();
+        foreach (var ingredient in ingredientDatas)
+        {
+            if (!ingredientDataDict.ContainsKey(ingredient.ID))
             {
-                pickIngredient = ingredientDatas[i];
-                break;
+                ingredientDataDict.Add(ingredient.ID, ingredient);
             }
         }
-        if (pickIngredient.ID == "0" || pickIngredient.ID == "")
+    }
+
+    private void AddFoodToDict()
+    {
+        foodDataDict = new Dictionary<string, FoodData>();
+        foreach (var food in foodDatas)
         {
-            Debug.LogError($"Can't find any match ID : {pickIngredient.ID}");
+            if (!foodDataDict.ContainsKey(food.ID))
+            {
+                foodDataDict.Add(food.ID, food);
+            }
         }
-        return pickIngredient;
+    }
+
+    private IngredientData GetIngredientByID(string id)
+    {
+        if (ingredientDataDict.TryGetValue(id, out var data))
+        {
+            return data;
+        }
+        return null;
     }
     
     private FoodData GetFoodByID(string id)
     {
-        FoodData pickFood = foodDatas.First();
-        for (int i = 0; i < foodDatas.Count; i++)
+        if (foodDataDict.TryGetValue(id, out var food))
         {
-            if (foodDatas[i].ID == id)
-            {
-                pickFood = foodDatas[i];
-                break;
-            }
+            return food;
         }
-        if (pickFood.ID == "0" || pickFood.ID == "")
-        {
-            Debug.LogError($"Can't find any match ID : {pickFood.ID}");
-        }
-        return pickFood;
+        return null;
     }
+    
 }
