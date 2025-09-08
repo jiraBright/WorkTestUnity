@@ -40,10 +40,10 @@ public class GameManager : PlayerInventory
     }
     private void InitializeDictionary()
     {
-        AddIngredeintDict();
-        AddFoodDict();
+        AddIngredeintToDict();
+        AddFoodToDict();
     }
-    private void AddIngredeintDict()
+    private void AddIngredeintToDict()
     {
         ingredientDataDict = new Dictionary<string, IngredientData>();
         foreach (var ingredient in ingredientDatas)
@@ -54,7 +54,7 @@ public class GameManager : PlayerInventory
             }
         }
     }
-    private void AddFoodDict()
+    private void AddFoodToDict()
     {
         foodDataDict = new Dictionary<string, FoodData>();
         foreach (var food in foodDatas)

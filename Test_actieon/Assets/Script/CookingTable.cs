@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CookingTable : MonoBehaviour
 {
+    [HideInInspector]
     public PlayerInventory playerInventory;
 
     public void CookFood(FoodData food)

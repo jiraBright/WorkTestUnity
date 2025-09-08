@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [Header("Inventory")]
-    public List<InventoryData<IngredientData>> IngredientsInventory = new();
-    public List<InventoryData<FoodData>> FoodsInventory = new();
+    public Dictionary<string, int> IngredientsInventory = new();
+    public Dictionary<string, int> FoodsInventory = new();
+
+    
 
     [Header("Energy Settings")]
     public int CurrentEnergy = 100;
@@ -19,27 +21,25 @@ public class PlayerInventory : MonoBehaviour
     #region Ingredient & Food
     public void AddIngredient(IngredientData ingredient, int amount)
     {
-        var item = IngredientsInventory.Find(i => i.Data.ID == ingredient.ID);
-        if (item != null)
+        if (IngredientsInventory.ContainsKey(ingredient.ID))
         {
-            item.Amount += amount;
+            IngredientsInventory[ingredient.ID] += amount;
         }
         else
         {
-            IngredientsInventory.Add(new InventoryData<IngredientData>(ingredient, amount));
+            IngredientsInventory[ingredient.ID] = amount;
         }
     }
 
     public void AddFood(FoodData food, int amount)
     {
-        var item = FoodsInventory.Find(i => i.Data.ID == food.ID);
-        if (item != null)
+        if (FoodsInventory.ContainsKey(food.ID))
         {
-            item.Amount += amount;
+            FoodsInventory[food.ID] += amount;
         }
         else
         {
-            FoodsInventory.Add(new InventoryData<FoodData>(food, amount));
+            FoodsInventory[food.ID] = amount;
         }
     }
 
@@ -47,8 +47,7 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (var req in requirements)
         {
-            var item = IngredientsInventory.Find(i => i.Data.ID == req.ingredient.ID);
-            if (item == null || item.Amount < req.amount)
+            if (!IngredientsInventory.TryGetValue(req.ingredient.ID, out int currentAmount) || currentAmount < req.amount)
             {
                 return false;
             }
@@ -60,11 +59,10 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (var req in requirements)
         {
-            var item = IngredientsInventory.Find(i => i.Data.ID == req.ingredient.ID);
-            if (item != null)
+            if (IngredientsInventory.ContainsKey(req.ingredient.ID))
             {
-                Debug.Log($"req ingre : {item.Data.name}");
-                item.Amount -= req.amount;
+                IngredientsInventory[req.ingredient.ID] -= req.amount;
+                Debug.Log($"req ingre : {req.ingredient.Name}");
             }
         }
     }
