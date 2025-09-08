@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class GameManager : PlayerInventory
 {
+    [Header("Datas")]
     [SerializeField] private List<IngredientData> ingredientDatas;
     [SerializeField] private List<FoodData> foodDatas;
 
+    [Header("UI panel")]
     [SerializeField] private GameObject cookingPanel;
     private CookingTable cookingTable;
+
     private Dictionary<string, IngredientData> ingredientDataDict;
     private Dictionary<string, FoodData> foodDataDict;
     
@@ -17,13 +20,13 @@ public class GameManager : PlayerInventory
     private void Start()
     {
         InitializeDictionary();
-        cookingTable = cookingPanel.GetComponent<CookingTable>();
-        cookingTable.playerInventory = this;
+        InitializeCookingTable();
 
         StartCoroutine(RefillEnergyRoutine());
         dateTimeLogin = DateTime.Now;
         Debug.Log(dateTimeLogin);
     }
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
@@ -38,11 +41,23 @@ public class GameManager : PlayerInventory
             cookingTable.CookFood(GetFoodByID("bun"));
         }
     }
+    
+    private void InitializeCookingTable()
+    {
+        cookingTable = GetComponent<CookingTable>();
+        if (!cookingTable)
+        {
+            cookingTable = gameObject.AddComponent<CookingTable>();
+        }
+        cookingTable.playerInventory = this;
+    }
+
     private void InitializeDictionary()
     {
         AddIngredeintToDict();
         AddFoodToDict();
     }
+
     private void AddIngredeintToDict()
     {
         ingredientDataDict = new Dictionary<string, IngredientData>();
@@ -54,6 +69,7 @@ public class GameManager : PlayerInventory
             }
         }
     }
+
     private void AddFoodToDict()
     {
         foodDataDict = new Dictionary<string, FoodData>();
@@ -65,6 +81,7 @@ public class GameManager : PlayerInventory
             }
         }
     }
+
     private IngredientData GetIngredientByID(string id)
     {
         if (ingredientDataDict.TryGetValue(id, out var data))

@@ -7,6 +7,7 @@ public class PlayerInventory : MonoBehaviour
     [Header("Inventory")]
     public Dictionary<string, int> IngredientsInventory = new();
     public Dictionary<string, int> FoodsInventory = new();
+    public Dictionary<FoodData, float> cookingFoods = new();
 
     
 

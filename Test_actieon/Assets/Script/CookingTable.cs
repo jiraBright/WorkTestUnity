@@ -8,6 +8,16 @@ public class CookingTable : MonoBehaviour
 
     public void CookFood(FoodData food)
     {
+        if (playerInventory.cookingFoods.ContainsKey(food))
+        {
+            float remainingTime = playerInventory.cookingFoods[food] - Time.realtimeSinceStartup;
+            if (remainingTime > 0)
+            {
+                Debug.Log($"{food.Name} is already cooking! Remaining: {remainingTime:F1} sec");
+                return;
+            }
+        }
+        
         if (!playerInventory.HasIngredients(food.IngredientsRequired))
         {
             Debug.Log("Not enough ingredients for " + food.Name);
@@ -16,19 +26,26 @@ public class CookingTable : MonoBehaviour
 
         if (!playerInventory.UseEnergy(food.EnergyUse))
         {
-            Debug.Log("Not enough energy!");
+            Debug.Log("Not enough energy");
             return;
         }
+        float endTime = Time.realtimeSinceStartup + food.CookingTime;
+        playerInventory.cookingFoods[food] = endTime;
 
         playerInventory.ConsumeIngredients(food.IngredientsRequired);
-        StartCoroutine(CookingProcess(food));
+        StartCoroutine(CookingProcess(food, endTime));
+        Debug.Log("Started cooking: " + food.Name);
     }
 
-    private IEnumerator CookingProcess(FoodData food)
+    private IEnumerator CookingProcess(FoodData food, float endTime)
     {
-        Debug.Log("Cooking started: " + food.Name);
-        yield return new WaitForSeconds(food.CookingTime);
-        playerInventory.AddFood(food, 1);
-        Debug.Log("Cooking finished: " + food.Name);
+        yield return new WaitForSecondsRealtime(food.CookingTime);
+
+        if (playerInventory.cookingFoods.ContainsKey(food) && Mathf.Approximately(playerInventory.cookingFoods[food], endTime))
+        {
+            playerInventory.AddFood(food, 1);
+            playerInventory.cookingFoods.Remove(food);
+            Debug.Log("Finished cooking: " + food.Name);
+        }
     }
 }
