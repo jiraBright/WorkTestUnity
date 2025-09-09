@@ -33,13 +33,18 @@ public class UIObjectHolder : MonoBehaviour
     private int currentPage;
     private int pageCount;
     private List<string> foodDatasID;
+    private List<string> filteredFoodIDs;
 
     private void Awake()
     {
         currentPage = 0;
+
         closeButton.onClick.AddListener(ClosePanel);
         NextMenuButton.onClick.AddListener(NextPage);
         PreviousMenuButton.onClick.AddListener(PreviousPage);
+
+        SearchInput.onValueChanged.AddListener(OnSearchValueChanged);
+        FilterButton.onClick.AddListener(OpenFilterOption);
     }
     public void Initialize(GameManager manager)
     {
@@ -53,13 +58,16 @@ public class UIObjectHolder : MonoBehaviour
         }
         pageCount = (int)Math.Ceiling((double)foodDatasID.Count / pageSize);
         SpawnPage();
+        filteredFoodIDs = foodDatasID;
         SetupPosterDetail();
     }
-    
+
     private void ClosePanel()
     {
         gameObject.SetActive(false);
     }
+
+    #region MenuPage
     private void SpawnPage()
     {
         if (PageHolder.transform.childCount == pageCount)
@@ -79,7 +87,7 @@ public class UIObjectHolder : MonoBehaviour
             currentPage++;
             PageHolder.UpdatePageSprite(currentPage);
             SetupPosterDetail();
-        }  
+        }
     }
     private void PreviousPage()
     {
@@ -99,12 +107,14 @@ public class UIObjectHolder : MonoBehaviour
     }
     private void SetupPosterDetail()
     {
-        if (foodDatasID.Count == 0)
+        if (filteredFoodIDs == null || filteredFoodIDs.Count == 0)
         {
+            ClearPage();
             return;
         }
+
         ClearPage();
-        var posterCollection = foodDatasID.Skip(currentPage * pageSize).Take(pageSize);
+        var posterCollection = filteredFoodIDs.Skip(currentPage * pageSize).Take(pageSize);
         foreach (var poster in posterCollection)
         {
             SpawnPosterToBoard(GameManager.Instance.GetFoodByID(poster));
@@ -116,4 +126,55 @@ public class UIObjectHolder : MonoBehaviour
             .GetComponent<MenuPoster>()
                 .InitializeMenuPoster(food.FoodName, food.Quality, food.FoodSprite);
     }
+    #endregion
+
+    #region Search & Filter
+    public void OnSearchValueChanged(string keyword)
+    {
+        if (keyword.Length < 3)
+        {
+            filteredFoodIDs = new List<string>(foodDatasID);
+        }
+        else
+        {
+            keyword = keyword.ToLower();
+            filteredFoodIDs = foodDatasID.Where(id =>
+            {
+                var food = GameManager.Instance.GetFoodByID(id);
+                return food.FoodName.ToLower().Contains(keyword);
+            }).ToList();
+        }
+
+        ResetPageHolder();
+    }
+
+    public void OnFilterByQuality(int quality)
+    {
+        filteredFoodIDs = foodDatasID.Where(id =>
+        {
+            var food = GameManager.Instance.GetFoodByID(id);
+            return food.Quality == quality;
+        }).ToList();
+
+        ResetPageHolder();
+    }
+    private void OpenFilterOption()
+    {
+        FilterButton.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+    private void ResetPageHolder()
+    {
+        currentPage = 0;
+        pageCount = (int)Math.Ceiling((double)filteredFoodIDs.Count / pageSize);
+
+        foreach (Transform child in PageHolder.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        SpawnPage();
+
+        SetupPosterDetail();
+    }
+    #endregion
 }
