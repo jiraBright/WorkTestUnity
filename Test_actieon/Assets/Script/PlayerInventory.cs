@@ -13,7 +13,7 @@ public class PlayerInventory : MonoBehaviour
 
     [Header("Energy Settings")]
     public int CurrentEnergy = 100;
-    public int maxEnergy = 100;
+    public int MaxEnergy = 100;
 
     private int refillEnergyAmount = 1;
     private float refillEnergyRate = 5f;
@@ -73,7 +73,7 @@ public class PlayerInventory : MonoBehaviour
     #region Energy
     private void AddEnergy(int amount)
     {
-        CurrentEnergy = Mathf.Clamp(CurrentEnergy + amount, 0, maxEnergy);
+        CurrentEnergy = Mathf.Clamp(CurrentEnergy + amount, 0, MaxEnergy);
         Debug.Log($"Current energy is: {CurrentEnergy}");
     }
 
@@ -83,7 +83,7 @@ public class PlayerInventory : MonoBehaviour
         {
             return false;
         }
-        CurrentEnergy = Mathf.Clamp(CurrentEnergy - amount, 0, maxEnergy);
+        CurrentEnergy = Mathf.Clamp(CurrentEnergy - amount, 0, MaxEnergy);
         return true;
     }
 
@@ -92,7 +92,7 @@ public class PlayerInventory : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(refillEnergyRate);
-            if (CurrentEnergy < maxEnergy)
+            if (CurrentEnergy < MaxEnergy)
             {
                 AddEnergy(refillEnergyAmount);
             }

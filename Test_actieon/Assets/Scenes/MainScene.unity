@@ -1113,7 +1113,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.6156863}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1458,7 +1458,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.6156863}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -2222,7 +2222,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 0.6156863}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -3942,7 +3942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentEnergy: 100
-  maxEnergy: 100
+  MaxEnergy: 100
   ingredientDatas:
   - {fileID: 11400000, guid: 97077fdd0ded99b41a33aa47156422f9, type: 2}
   - {fileID: 11400000, guid: 2bc69870927ff3542962ef0cf95224f2, type: 2}
@@ -3951,12 +3951,42 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 64befbcb0e2092a4cb3cc7779079e576, type: 2}
   foodDatas:
   - {fileID: 11400000, guid: 058ea142d2421d84caee76477a2c22f7, type: 2}
-  - {fileID: 11400000, guid: f2522428b4d53a148902e529960ea528, type: 2}
+  - {fileID: 11400000, guid: 8b6973f30c6a77b499f459f0983122a9, type: 2}
   - {fileID: 11400000, guid: 17170207257fe2547bcff6f73ff1eea1, type: 2}
+  - {fileID: 11400000, guid: e91c23574520d8a43a4cb1b1fc51e367, type: 2}
+  - {fileID: 11400000, guid: f2522428b4d53a148902e529960ea528, type: 2}
+  - {fileID: 11400000, guid: 75b7d49ea4ee8d14ca76fa1f93982ee4, type: 2}
+  - {fileID: 11400000, guid: 35c951ae844960c46bf356f4681a694e, type: 2}
+  - {fileID: 11400000, guid: 941c0498cb75a524e868df48971a3597, type: 2}
+  - {fileID: 11400000, guid: 5f18511a8cedf444ca3de9371bd27533, type: 2}
+  - {fileID: 11400000, guid: 242f47947c8a4484fb4ca65ea4a0d06c, type: 2}
+  - {fileID: 11400000, guid: 3dc5e840fb7f94a44a8e9339cabb4114, type: 2}
+  - {fileID: 11400000, guid: dd5611354f83dcc4d8c170da4f2f7841, type: 2}
+  - {fileID: 11400000, guid: d67c91c160d4ac6449a0c13d5013b2ec, type: 2}
+  - {fileID: 11400000, guid: fb638531fc19d894ea34690784a76790, type: 2}
+  - {fileID: 11400000, guid: c87e6a86b6a1efd41a388e6b92df0618, type: 2}
+  - {fileID: 11400000, guid: d66f1a0fe30f2e24a86a4251ab7c74df, type: 2}
+  - {fileID: 11400000, guid: f7589f1c53558d54bacfaf9bfa7f7b3c, type: 2}
+  - {fileID: 11400000, guid: e4ebe8afa60c3c64798eabbc219f1d9b, type: 2}
+  - {fileID: 11400000, guid: 4dc60e184b4085c4aa2ff2127b44ddd6, type: 2}
+  - {fileID: 11400000, guid: d48d0cabab241074c883c857c2023db4, type: 2}
+  - {fileID: 11400000, guid: 007ffc7df3923864c9e7221871375b86, type: 2}
+  - {fileID: 11400000, guid: 460ba32e0c3064d43be43e78c1b233df, type: 2}
+  - {fileID: 11400000, guid: b0adfd87ac616d542829dfce0c28aa35, type: 2}
+  - {fileID: 11400000, guid: 8812d07e729af384086181a6ae506177, type: 2}
+  - {fileID: 11400000, guid: 035e3b2e689dba14088212da05435b41, type: 2}
   - {fileID: 11400000, guid: 5cd7adc8a2d357249a654b88b925c6d8, type: 2}
+  - {fileID: 11400000, guid: a3fbd25b5ce7ed847a173bd81e6b74bb, type: 2}
+  - {fileID: 11400000, guid: 3d064a59761000d4c9df25ccd7cf92ff, type: 2}
+  - {fileID: 11400000, guid: f001321198d87e646a8662f0de0769b7, type: 2}
   - {fileID: 11400000, guid: ed269619bd98c9e4498a582e1563e6be, type: 2}
+  - {fileID: 11400000, guid: a2af47a3bdfdf914e83514ba4c18f272, type: 2}
+  - {fileID: 11400000, guid: c7404861ef4421147bcac13b49aacdae, type: 2}
+  - {fileID: 11400000, guid: 23fc30c4bc6c9d645b176ab6997c3d0a, type: 2}
+  - {fileID: 11400000, guid: 31477e262925dbe4196a2999746362f9, type: 2}
   cookingPanel: {fileID: 1582967675}
   openCookButton: {fileID: 933880090}
+  cookingTable: {fileID: 0}
 --- !u!1 &1445643284
 GameObject:
   m_ObjectHideFlags: 0

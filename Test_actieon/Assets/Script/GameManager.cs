@@ -40,7 +40,7 @@ public class GameManager : PlayerInventory
         {
             for (int i = 0; i < ingredientDatas.Count; i++)
             {
-                if (ingredientDatas[i].ID != "")
+                if (!string.IsNullOrEmpty(ingredientDatas[i].ID))
                 {
                     AddIngredient(ingredientDatas[i], 0);
                 }
@@ -62,6 +62,9 @@ public class GameManager : PlayerInventory
         if (Input.GetKeyDown(KeyCode.A))
         {
             AddIngredient(ingredientDatas[2], 1);
+            AddIngredient(ingredientDatas[1], 1);
+            AddIngredient(ingredientDatas[3], 1);
+            AddIngredient(ingredientDatas[4], 1);
         }
     }
 

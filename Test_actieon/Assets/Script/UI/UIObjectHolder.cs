@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Spine;
 using Spine.Unity;
 using TMPro;
 using UnityEngine;
@@ -28,18 +29,24 @@ public class UIObjectHolder : MonoBehaviour
     [SerializeField] private PageBorder pageHolder;
     [SerializeField] private GameObject pageprefab;
 
-    private string currentFoodID;
     private FoodData selectedFood => GameManager.Instance.GetFoodByID(currentFoodID);
+
+    private string currentFoodID;
+    private string lastFoodID;
+    private string currentPotAnim = "";
+    private bool waitingForSuccess = false;
     private int pageSize = 4;
     private int currentPage;
     private int pageCount;
     private List<string> foodDatasID;
     private List<string> filteredFoodIDs;
-
+    
     private void Awake()
     {
         currentPage = 0;
         currentFoodID = "";
+
+        energybar.maxValue = GameManager.Instance.MaxEnergy;
 
         closeButton.onClick.AddListener(ClosePanel);
         nextMenuButton.onClick.AddListener(NextPage);
@@ -52,14 +59,9 @@ public class UIObjectHolder : MonoBehaviour
     }
     void Update()
     {
-        if (currentFoodID == "")
-        {
-            startButton.interactable = false;
-        }
-        if (!GameManager.Instance.HasIngredients(selectedFood.IngredientsRequired))
-        {
-            startButton.interactable = false;
-        }
+        energyAmountText.SetText($"{GameManager.Instance.CurrentEnergy}/{GameManager.Instance.MaxEnergy}");
+        energybar.value = GameManager.Instance.CurrentEnergy;
+        UpdatePotAnimation();
 
         if (GameManager.Instance.cookingFoods.ContainsKey(selectedFood))
         {
@@ -72,20 +74,33 @@ public class UIObjectHolder : MonoBehaviour
                 startButton.interactable = false;
                 return;
             }
-        }else
+        }
+        else
         {
             cookingTimeText.SetText("0:00");
         }
-        
+
+        if (!GameManager.Instance.HasIngredients(selectedFood.IngredientsRequired))
+        {
+            startButton.interactable = false;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(currentFoodID))
+        {
+            startButton.interactable = false;
+            return;
+        }
+
         startButton.interactable = true;
     }
-    
+
     public void Initialize()
     {
         foodDatasID = new List<string>();
         for (int i = 0; i < GameManager.Instance.foodDatas.Count; i++)
         {
-            if (GameManager.Instance.foodDatas[i].ID != "")
+            if (!string.IsNullOrEmpty(GameManager.Instance.foodDatas[i].ID))
             {
                 foodDatasID.Add(GameManager.Instance.foodDatas[i].ID);
             }
@@ -249,4 +264,67 @@ public class UIObjectHolder : MonoBehaviour
 
     #endregion
 
+    #region Pot AnimationHandler
+
+    private void UpdatePotAnimation()
+    {
+        bool foodChanged = currentFoodID != lastFoodID;
+        lastFoodID = currentFoodID;
+
+        string nextAnim;
+
+        if (string.IsNullOrEmpty(currentFoodID))
+        {
+            nextAnim = "idle";
+        }
+        else if (GameManager.Instance.cookingFoods.ContainsKey(selectedFood))
+        {
+            float remainingTime = GameManager.Instance.cookingFoods[selectedFood] - Time.realtimeSinceStartup;
+            if (remainingTime > 0)
+            {
+                nextAnim = "idle-boiled";
+            }
+            else
+            {
+                nextAnim = "success-idle";
+            }
+        }
+        else
+        {
+            nextAnim = "idle";
+        }
+
+        if (nextAnim == "success-idle" && currentPotAnim != "success-idle")
+        {
+            TrackEntry entry = spinePot.AnimationState.SetAnimation(0, "success-idle", false);
+            currentPotAnim = "success-idle";
+            waitingForSuccess = true;
+
+            entry.Complete += _ =>
+            {
+                if (waitingForSuccess)
+                {
+                    spinePot.AnimationState.SetAnimation(0, "idle", true);
+                    currentPotAnim = "idle";
+                    waitingForSuccess = false;
+                }
+            };
+
+            return;
+        }
+
+        if (waitingForSuccess && !foodChanged)
+        {
+            return;
+        }
+
+        if (nextAnim != currentPotAnim)
+        {
+            spinePot.AnimationState.SetAnimation(0, nextAnim, true);
+            currentPotAnim = nextAnim;
+            waitingForSuccess = false;
+        }
+    }
+
+    #endregion
 }
