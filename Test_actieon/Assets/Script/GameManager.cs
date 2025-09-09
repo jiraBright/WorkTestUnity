@@ -14,6 +14,7 @@ public class GameManager : PlayerInventory
     [Header("UI panel")]
     [SerializeField] private GameObject cookingPanel;
     [SerializeField] private Button openCookButton;
+    [SerializeField] private Button addIngredientButton;
     private UIObjectHolder cookUIHolder;
 
     private Dictionary<string, IngredientData> ingredientDataDict;
@@ -48,6 +49,7 @@ public class GameManager : PlayerInventory
         }
 
         openCookButton.onClick.AddListener(OpenCookingMenu);
+        addIngredientButton.onClick.AddListener(() => AddAllIngredient(10));
         InitializeDataDictionary();
         InitializeCookingTable();
 
@@ -59,13 +61,14 @@ public class GameManager : PlayerInventory
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            AddIngredient(ingredientDatas[2], 1);
-            AddIngredient(ingredientDatas[1], 1);
-            AddIngredient(ingredientDatas[3], 1);
-            AddIngredient(ingredientDatas[4], 1);
+            AddAllIngredient(1);
         }
+    }
+    private void OnApplicationQuit()
+    {
+        dateTimeLogout = DateTime.Now;
     }
 
     public FoodData GetFoodByID(string id)
@@ -91,6 +94,14 @@ public class GameManager : PlayerInventory
             return;
         }
         cookUIHolder.Initialize();
+    }
+
+    private void AddAllIngredient(int amount)
+    {
+        AddIngredient(ingredientDatas[1], amount);
+        AddIngredient(ingredientDatas[2], amount);
+        AddIngredient(ingredientDatas[3], amount);
+        AddIngredient(ingredientDatas[4], amount);
     }
     
     private void InitializeCookingTable()
