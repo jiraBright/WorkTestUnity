@@ -1,45 +1,107 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : PlayerInventory
 {
+    public static GameManager Instance { get; private set; }
+
     [Header("Datas")]
-    [SerializeField] private List<IngredientData> ingredientDatas;
-    [SerializeField] private List<FoodData> foodDatas;
+    public List<IngredientData> ingredientDatas;
+    public List<FoodData> foodDatas;
 
     [Header("UI panel")]
     [SerializeField] private GameObject cookingPanel;
-    private CookingTable cookingTable;
+    [SerializeField] private Button openCookButton;
+    [SerializeField] private Button addIngredientButton;
+    private UIObjectHolder cookUIHolder;
 
     private Dictionary<string, IngredientData> ingredientDataDict;
     private Dictionary<string, FoodData> foodDataDict;
     
     private DateTime dateTimeLogin;
     private DateTime dateTimeLogout;
+    
+    public CookingTable cookingTable;
+
     private void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+
+        if (IngredientsInventory.Count < ingredientDatas.Count)
+        {
+            for (int i = 0; i < ingredientDatas.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(ingredientDatas[i].ID))
+                {
+                    AddIngredient(ingredientDatas[i], 0);
+                }
+            }
+        }
+
+        openCookButton.onClick.AddListener(OpenCookingMenu);
+        addIngredientButton.onClick.AddListener(() => AddAllIngredient(10));
         InitializeDataDictionary();
         InitializeCookingTable();
 
         StartCoroutine(RefillEnergyRoutine());
+
         dateTimeLogin = DateTime.Now;
         Debug.Log(dateTimeLogin);
     }
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            AddIngredient(GetIngredientByID("veg"), 1);
-            AddIngredient(GetIngredientByID("egg"), 1);
-            AddIngredient(GetIngredientByID("car"), 1);
-            AddIngredient(GetIngredientByID("rice"), 1);
+            AddAllIngredient(1);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+    }
+    private void OnApplicationQuit()
+    {
+        dateTimeLogout = DateTime.Now;
+    }
+
+    public FoodData GetFoodByID(string id)
+    {
+
+        if (foodDataDict.TryGetValue(id, out var food))
         {
-            cookingTable.CookFood(GetFoodByID("bun"));
+            return food;
         }
+        return null;
+    }
+
+    private void OpenCookingMenu()
+    {
+        if (cookingPanel.activeInHierarchy)
+        {
+            return;
+        }
+        cookingPanel.SetActive(true);
+        if (!cookingPanel.TryGetComponent(out cookUIHolder))
+        {
+            Debug.LogError("Can't find UI Holder component");
+            return;
+        }
+        cookUIHolder.Initialize();
+    }
+
+    private void AddAllIngredient(int amount)
+    {
+        AddIngredient(ingredientDatas[1], amount);
+        AddIngredient(ingredientDatas[2], amount);
+        AddIngredient(ingredientDatas[3], amount);
+        AddIngredient(ingredientDatas[4], amount);
     }
     
     private void InitializeCookingTable()
@@ -49,7 +111,6 @@ public class GameManager : PlayerInventory
         {
             cookingTable = gameObject.AddComponent<CookingTable>();
         }
-        cookingTable.playerInventory = this;
     }
 
     private void InitializeDataDictionary()
@@ -82,22 +143,6 @@ public class GameManager : PlayerInventory
         }
     }
 
-    private IngredientData GetIngredientByID(string id)
-    {
-        if (ingredientDataDict.TryGetValue(id, out var data))
-        {
-            return data;
-        }
-        return null;
-    }
     
-    private FoodData GetFoodByID(string id)
-    {
-        if (foodDataDict.TryGetValue(id, out var food))
-        {
-            return food;
-        }
-        return null;
-    }
     
 }

@@ -11,9 +11,9 @@ public class IngredientRequirement
 public class FoodData : ScriptableObject
 {
     public string ID;
-    public string Name;
+    public string FoodName;
     public List<IngredientRequirement> IngredientsRequired;
-    public int quality;
+    public int Quality;
     public int EnergyUse = 10;
     public float CookingTime = 5f;
 
