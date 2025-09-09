@@ -15,6 +15,7 @@ public class GameManager : PlayerInventory
     [SerializeField] private GameObject cookingPanel;
     [SerializeField] private Button openCookButton;
     [SerializeField] private Button addIngredientButton;
+
     private UIObjectHolder cookUIHolder;
 
     private Dictionary<string, IngredientData> ingredientDataDict;
@@ -22,8 +23,10 @@ public class GameManager : PlayerInventory
     
     private DateTime dateTimeLogin;
     private DateTime dateTimeLogout;
-    
+
+    [Header("Manager")]
     public CookingTable cookingTable;
+    public PopupManager popupManager;
 
     private void Start()
     {
