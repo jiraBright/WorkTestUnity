@@ -13,14 +13,14 @@ public class CookingTable : MonoBehaviour
             float remainingTime = playerInventory.cookingFoods[food] - Time.realtimeSinceStartup;
             if (remainingTime > 0)
             {
-                Debug.Log($"{food.Name} is already cooking! Remaining: {remainingTime:F1} sec");
+                Debug.Log($"{food.FoodName} is already cooking! Remaining: {remainingTime:F1} sec");
                 return;
             }
         }
 
         if (!playerInventory.HasIngredients(food.IngredientsRequired))
         {
-            Debug.Log("Not enough ingredients for " + food.Name);
+            Debug.Log("Not enough ingredients for " + food.FoodName);
             return;
         }
 
@@ -34,7 +34,7 @@ public class CookingTable : MonoBehaviour
 
         playerInventory.ConsumeIngredients(food.IngredientsRequired);
         StartCoroutine(CookingProcess(food, endTime));
-        Debug.Log("Started cooking: " + food.Name);
+        Debug.Log("Started cooking: " + food.FoodName);
     }
 
     private IEnumerator CookingProcess(FoodData food, float endTime)
@@ -45,7 +45,7 @@ public class CookingTable : MonoBehaviour
         {
             playerInventory.AddFood(food, 1);
             playerInventory.cookingFoods.Remove(food);
-            Debug.Log("Finished cooking: " + food.Name);
+            Debug.Log("Finished cooking: " + food.FoodName);
         }
     }
 }

@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : PlayerInventory
 {
+    public static GameManager Instance { get; private set; }
+
     [Header("Datas")]
-    [SerializeField] private List<IngredientData> ingredientDatas;
-    [SerializeField] private List<FoodData> foodDatas;
+    public List<IngredientData> ingredientDatas;
+    public List<FoodData> foodDatas;
 
     [Header("UI panel")]
     [SerializeField] private GameObject cookingPanel;
+    [SerializeField] private Button openCookButton;
     private CookingTable cookingTable;
+    private UIObjectHolder cookUIHolder;
 
     private Dictionary<string, IngredientData> ingredientDataDict;
     private Dictionary<string, FoodData> foodDataDict;
@@ -19,6 +24,16 @@ public class GameManager : PlayerInventory
     private DateTime dateTimeLogout;
     private void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
+        openCookButton.onClick.AddListener(OpenCookingMenu);
         InitializeDataDictionary();
         InitializeCookingTable();
 
@@ -29,17 +44,22 @@ public class GameManager : PlayerInventory
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        
+    }
+
+    private void OpenCookingMenu()
+    {
+        if (cookingPanel.activeInHierarchy)
         {
-            AddIngredient(GetIngredientByID("veg"), 1);
-            AddIngredient(GetIngredientByID("egg"), 1);
-            AddIngredient(GetIngredientByID("car"), 1);
-            AddIngredient(GetIngredientByID("rice"), 1);
+            return;
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        cookingPanel.SetActive(true);
+        if (!cookingPanel.TryGetComponent(out cookUIHolder))
         {
-            cookingTable.CookFood(GetFoodByID("bun"));
+            Debug.LogError("Can't find UI Holder component");
+            return;
         }
+        cookUIHolder.Initialize(this);
     }
     
     private void InitializeCookingTable()
@@ -91,7 +111,7 @@ public class GameManager : PlayerInventory
         return null;
     }
     
-    private FoodData GetFoodByID(string id)
+    public FoodData GetFoodByID(string id)
     {
         if (foodDataDict.TryGetValue(id, out var food))
         {
