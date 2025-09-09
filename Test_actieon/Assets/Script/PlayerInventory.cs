@@ -22,6 +22,7 @@ public class PlayerInventory : MonoBehaviour
     #region Ingredient & Food
     public void AddIngredient(IngredientData ingredient, int amount)
     {
+         Debug.Log($"ID: {ingredient.ID} Amount: {amount}");
         if (IngredientsInventory.ContainsKey(ingredient.ID))
         {
             IngredientsInventory[ingredient.ID] += amount;

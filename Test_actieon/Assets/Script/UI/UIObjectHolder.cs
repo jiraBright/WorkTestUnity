@@ -10,23 +10,23 @@ public class UIObjectHolder : MonoBehaviour
     [SerializeField] private Button closeButton;
 
     [Header("Cooking side")]
-    public GameObject MemoPanel;
-    public GameObject MemoPrefab;
-    public SkeletonGraphic SpinePot;
-    public TMP_Text CookingTimeText;
-    public Slider Energybar;
-    public TMP_Text EnergyAmountText;
-    public Button StartButton;
+    [SerializeField] private GameObject memoPanel;
+    [SerializeField] private GameObject memoPrefab;
+    [SerializeField] private SkeletonGraphic spinePot;
+    [SerializeField] private TMP_Text cookingTimeText;
+    [SerializeField] private Slider energybar;
+    [SerializeField] private TMP_Text energyAmountText;
+    [SerializeField] private Button startButton;
 
     [Header("Menu side")]
-    public TMP_InputField SearchInput;
-    public Button FilterButton;
-    public GameObject MenuBoard;
-    public GameObject PosterPrefab;
-    public Button NextMenuButton;
-    public Button PreviousMenuButton;
-    public PageBorder PageHolder;
-    [SerializeField] private GameObject Pageprefab;
+    [SerializeField] private TMP_InputField searchInput;
+    [SerializeField] private Button filterButton;
+    [SerializeField] private GameObject menuBoard;
+    [SerializeField] private GameObject posterPrefab;
+    [SerializeField] private Button nextMenuButton;
+    [SerializeField] private Button previousMenuButton;
+    [SerializeField] private PageBorder pageHolder;
+    [SerializeField] private GameObject pageprefab;
 
     private string currentFoodID;
     private int pageSize = 4;
@@ -38,13 +38,14 @@ public class UIObjectHolder : MonoBehaviour
     private void Awake()
     {
         currentPage = 0;
+        currentFoodID = "";
 
         closeButton.onClick.AddListener(ClosePanel);
-        NextMenuButton.onClick.AddListener(NextPage);
-        PreviousMenuButton.onClick.AddListener(PreviousPage);
+        nextMenuButton.onClick.AddListener(NextPage);
+        previousMenuButton.onClick.AddListener(PreviousPage);
 
-        SearchInput.onValueChanged.AddListener(OnSearchValueChanged);
-        FilterButton.onClick.AddListener(OpenFilterOption);
+        searchInput.onValueChanged.AddListener(OnSearchValueChanged);
+        filterButton.onClick.AddListener(OpenFilterOption);
     }
     public void Initialize(GameManager manager)
     {
@@ -67,17 +68,17 @@ public class UIObjectHolder : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    #region MenuPage
+    #region MenuPage Handler
     private void SpawnPage()
     {
-        if (PageHolder.transform.childCount == pageCount)
+        if (pageHolder.transform.childCount == pageCount)
         {
             return;
         }
         for (int i = 0; i < pageCount; i++)
         {
-            Instantiate(Pageprefab, PageHolder.transform);
-            PageHolder.UpdatePageSprite(currentPage);
+            Instantiate(pageprefab, pageHolder.transform);
+            pageHolder.UpdatePageSprite(currentPage);
         }
     }
     private void NextPage()
@@ -85,7 +86,7 @@ public class UIObjectHolder : MonoBehaviour
         if (currentPage < pageCount - 1)
         {
             currentPage++;
-            PageHolder.UpdatePageSprite(currentPage);
+            pageHolder.UpdatePageSprite(currentPage);
             SetupPosterDetail();
         }
     }
@@ -94,26 +95,27 @@ public class UIObjectHolder : MonoBehaviour
         if (currentPage > 0)
         {
             currentPage--;
-            PageHolder.UpdatePageSprite(currentPage);
+            pageHolder.UpdatePageSprite(currentPage);
             SetupPosterDetail();
         }
     }
     private void ClearPage()
     {
-        for (int i = 0; i < MenuBoard.transform.childCount; i++)
+        foreach (Transform child in menuBoard.transform)
         {
-            Destroy(MenuBoard.transform.GetChild(i).gameObject);
+            Destroy(child.gameObject);
         }
+        ClearMemo();
     }
+
     private void SetupPosterDetail()
     {
+        ClearPage();
         if (filteredFoodIDs == null || filteredFoodIDs.Count == 0)
         {
-            ClearPage();
             return;
         }
 
-        ClearPage();
         var posterCollection = filteredFoodIDs.Skip(currentPage * pageSize).Take(pageSize);
         foreach (var poster in posterCollection)
         {
@@ -122,13 +124,13 @@ public class UIObjectHolder : MonoBehaviour
     }
     private void SpawnPosterToBoard(FoodData food)
     {
-        Instantiate(PosterPrefab, MenuBoard.transform)
-            .GetComponent<MenuPoster>()
-                .InitializeMenuPoster(food.FoodName, food.Quality, food.FoodSprite);
+        GameObject foodPoster = Instantiate(posterPrefab, menuBoard.transform);
+        foodPoster.GetComponent<MenuPoster>().InitializeMenuPoster(food.FoodName, food.Quality, food.FoodSprite);
+        foodPoster.GetComponent<Button>().onClick.AddListener(() => ShowIngredient(food.ID));
     }
     #endregion
 
-    #region Search & Filter
+    #region Search & Filter Handler
     public void OnSearchValueChanged(string keyword)
     {
         if (keyword.Length < 3)
@@ -160,21 +162,57 @@ public class UIObjectHolder : MonoBehaviour
     }
     private void OpenFilterOption()
     {
-        FilterButton.transform.GetChild(0).gameObject.SetActive(true);
+        filterButton.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     private void ResetPageHolder()
     {
         currentPage = 0;
         pageCount = (int)Math.Ceiling((double)filteredFoodIDs.Count / pageSize);
-
-        foreach (Transform child in PageHolder.transform)
+        if (pageHolder.transform.childCount != pageCount)
         {
-            Destroy(child.gameObject);
+            foreach (Transform child in pageHolder.transform)
+            {
+                Destroy(child.gameObject);
+            }
         }
+
         SpawnPage();
 
         SetupPosterDetail();
     }
+    #endregion
+
+    #region Ingredient Memo
+
+    private void ShowIngredient(string foodID)
+    {
+        if (currentFoodID == foodID)
+        {
+            return;
+        }
+        ClearMemo();
+        currentFoodID = foodID;
+        List<IngredientRequirement> reqDatas = GameManager.Instance.GetFoodByID(currentFoodID).IngredientsRequired;
+        for (int i = 0; i < reqDatas.Count; i++)
+        {
+            SpawnMemoToBoard(reqDatas[i].amount, reqDatas[i].ingredient);
+        }
+    }
+    private void SpawnMemoToBoard(int reqAmount, IngredientData ingredient)
+    {
+        GameObject ingredientMemo = Instantiate(memoPrefab, memoPanel.transform);
+        IngredientMemo memoDetail = ingredientMemo.GetComponent<IngredientMemo>();
+        memoDetail.InitializeIngredientMemo(reqAmount, ingredient);
+    }
+
+    private void ClearMemo()
+    {
+        foreach (Transform child in memoPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
     #endregion
 }

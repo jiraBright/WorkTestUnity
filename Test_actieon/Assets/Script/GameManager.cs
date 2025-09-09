@@ -33,18 +33,31 @@ public class GameManager : PlayerInventory
         {
             Instance = this;
         }
+
+        if (IngredientsInventory.Count < ingredientDatas.Count)
+        {
+            for (int i = 1; i < ingredientDatas.Count; i++)
+            {
+                AddIngredient(ingredientDatas[i], 0);
+            }
+        }
+
         openCookButton.onClick.AddListener(OpenCookingMenu);
         InitializeDataDictionary();
         InitializeCookingTable();
-
+        
         StartCoroutine(RefillEnergyRoutine());
+        
         dateTimeLogin = DateTime.Now;
         Debug.Log(dateTimeLogin);
     }
     
     private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            AddIngredient(ingredientDatas[2], 1);
+        }
     }
 
     private void OpenCookingMenu()
@@ -102,7 +115,7 @@ public class GameManager : PlayerInventory
         }
     }
 
-    private IngredientData GetIngredientByID(string id)
+    public IngredientData GetIngredientByID(string id)
     {
         if (ingredientDataDict.TryGetValue(id, out var data))
         {
