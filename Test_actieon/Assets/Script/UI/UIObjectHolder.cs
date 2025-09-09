@@ -29,6 +29,7 @@ public class UIObjectHolder : MonoBehaviour
     [SerializeField] private GameObject pageprefab;
 
     private string currentFoodID;
+    private FoodData selectedFood => GameManager.Instance.GetFoodByID(currentFoodID);
     private int pageSize = 4;
     private int currentPage;
     private int pageCount;
@@ -46,15 +47,47 @@ public class UIObjectHolder : MonoBehaviour
 
         searchInput.onValueChanged.AddListener(OnSearchValueChanged);
         filterButton.onClick.AddListener(OpenFilterOption);
+
+        startButton.onClick.AddListener(() => GameManager.Instance.cookingTable.CookFood(selectedFood));
     }
-    public void Initialize(GameManager manager)
+    void Update()
+    {
+        if (currentFoodID == "")
+        {
+            startButton.interactable = false;
+        }
+        if (!GameManager.Instance.HasIngredients(selectedFood.IngredientsRequired))
+        {
+            startButton.interactable = false;
+        }
+
+        if (GameManager.Instance.cookingFoods.ContainsKey(selectedFood))
+        {
+            float remainingTime = GameManager.Instance.cookingFoods[selectedFood] - Time.realtimeSinceStartup;
+            int minutes = Mathf.FloorToInt(remainingTime / 60f);
+            int seconds = Mathf.FloorToInt(remainingTime % 60f);
+            if (remainingTime > 0)
+            {
+                cookingTimeText.SetText(string.Format("{0}:{1:00}", minutes, seconds));
+                startButton.interactable = false;
+                return;
+            }
+        }else
+        {
+            cookingTimeText.SetText("0:00");
+        }
+        
+        startButton.interactable = true;
+    }
+    
+    public void Initialize()
     {
         foodDatasID = new List<string>();
-        for (int i = 0; i < manager.foodDatas.Count; i++)
+        for (int i = 0; i < GameManager.Instance.foodDatas.Count; i++)
         {
-            if (manager.foodDatas[i].ID != "0")
+            if (GameManager.Instance.foodDatas[i].ID != "")
             {
-                foodDatasID.Add(manager.foodDatas[i].ID);
+                foodDatasID.Add(GameManager.Instance.foodDatas[i].ID);
             }
         }
         pageCount = (int)Math.Ceiling((double)foodDatasID.Count / pageSize);
@@ -193,7 +226,7 @@ public class UIObjectHolder : MonoBehaviour
         }
         ClearMemo();
         currentFoodID = foodID;
-        List<IngredientRequirement> reqDatas = GameManager.Instance.GetFoodByID(currentFoodID).IngredientsRequired;
+        List<IngredientRequirement> reqDatas = selectedFood.IngredientsRequired;
         for (int i = 0; i < reqDatas.Count; i++)
         {
             SpawnMemoToBoard(reqDatas[i].amount, reqDatas[i].ingredient);
@@ -215,4 +248,5 @@ public class UIObjectHolder : MonoBehaviour
     }
 
     #endregion
+
 }

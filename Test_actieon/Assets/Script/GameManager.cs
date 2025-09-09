@@ -14,7 +14,6 @@ public class GameManager : PlayerInventory
     [Header("UI panel")]
     [SerializeField] private GameObject cookingPanel;
     [SerializeField] private Button openCookButton;
-    private CookingTable cookingTable;
     private UIObjectHolder cookUIHolder;
 
     private Dictionary<string, IngredientData> ingredientDataDict;
@@ -22,6 +21,9 @@ public class GameManager : PlayerInventory
     
     private DateTime dateTimeLogin;
     private DateTime dateTimeLogout;
+    
+    public CookingTable cookingTable;
+
     private void Start()
     {
         if (Instance != null)
@@ -36,18 +38,21 @@ public class GameManager : PlayerInventory
 
         if (IngredientsInventory.Count < ingredientDatas.Count)
         {
-            for (int i = 1; i < ingredientDatas.Count; i++)
+            for (int i = 0; i < ingredientDatas.Count; i++)
             {
-                AddIngredient(ingredientDatas[i], 0);
+                if (ingredientDatas[i].ID != "")
+                {
+                    AddIngredient(ingredientDatas[i], 0);
+                }
             }
         }
 
         openCookButton.onClick.AddListener(OpenCookingMenu);
         InitializeDataDictionary();
         InitializeCookingTable();
-        
+
         StartCoroutine(RefillEnergyRoutine());
-        
+
         dateTimeLogin = DateTime.Now;
         Debug.Log(dateTimeLogin);
     }
@@ -58,6 +63,16 @@ public class GameManager : PlayerInventory
         {
             AddIngredient(ingredientDatas[2], 1);
         }
+    }
+
+    public FoodData GetFoodByID(string id)
+    {
+
+        if (foodDataDict.TryGetValue(id, out var food))
+        {
+            return food;
+        }
+        return null;
     }
 
     private void OpenCookingMenu()
@@ -72,7 +87,7 @@ public class GameManager : PlayerInventory
             Debug.LogError("Can't find UI Holder component");
             return;
         }
-        cookUIHolder.Initialize(this);
+        cookUIHolder.Initialize();
     }
     
     private void InitializeCookingTable()
@@ -82,7 +97,6 @@ public class GameManager : PlayerInventory
         {
             cookingTable = gameObject.AddComponent<CookingTable>();
         }
-        cookingTable.playerInventory = this;
     }
 
     private void InitializeDataDictionary()
@@ -115,22 +129,6 @@ public class GameManager : PlayerInventory
         }
     }
 
-    public IngredientData GetIngredientByID(string id)
-    {
-        if (ingredientDataDict.TryGetValue(id, out var data))
-        {
-            return data;
-        }
-        return null;
-    }
     
-    public FoodData GetFoodByID(string id)
-    {
-        if (foodDataDict.TryGetValue(id, out var food))
-        {
-            return food;
-        }
-        return null;
-    }
     
 }

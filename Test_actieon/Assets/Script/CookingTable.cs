@@ -3,14 +3,11 @@ using UnityEngine;
 
 public class CookingTable : MonoBehaviour
 {
-    [HideInInspector]
-    public PlayerInventory playerInventory;
-
     public void CookFood(FoodData food)
     {
-        if (playerInventory.cookingFoods.ContainsKey(food))
+        if (GameManager.Instance.cookingFoods.ContainsKey(food))
         {
-            float remainingTime = playerInventory.cookingFoods[food] - Time.realtimeSinceStartup;
+            float remainingTime = GameManager.Instance.cookingFoods[food] - Time.realtimeSinceStartup;
             if (remainingTime > 0)
             {
                 Debug.Log($"{food.FoodName} is already cooking! Remaining: {remainingTime:F1} sec");
@@ -18,21 +15,15 @@ public class CookingTable : MonoBehaviour
             }
         }
 
-        if (!playerInventory.HasIngredients(food.IngredientsRequired))
-        {
-            Debug.Log("Not enough ingredients for " + food.FoodName);
-            return;
-        }
-
-        if (!playerInventory.UseEnergy(food.EnergyUse))
+        if (!GameManager.Instance.UseEnergy(food.EnergyUse))
         {
             Debug.Log("Not enough energy");
             return;
         }
-        float endTime = Time.realtimeSinceStartup + food.CookingTime;
-        playerInventory.cookingFoods[food] = endTime;
 
-        playerInventory.ConsumeIngredients(food.IngredientsRequired);
+        float endTime = Time.realtimeSinceStartup + food.CookingTime;
+        GameManager.Instance.cookingFoods[food] = endTime;
+        GameManager.Instance.ConsumeIngredients(food.IngredientsRequired);
         StartCoroutine(CookingProcess(food, endTime));
         Debug.Log("Started cooking: " + food.FoodName);
     }
@@ -40,11 +31,11 @@ public class CookingTable : MonoBehaviour
     private IEnumerator CookingProcess(FoodData food, float endTime)
     {
         yield return new WaitForSecondsRealtime(food.CookingTime);
-
-        if (playerInventory.cookingFoods.ContainsKey(food) && Mathf.Approximately(playerInventory.cookingFoods[food], endTime))
+        
+        if (GameManager.Instance.cookingFoods.ContainsKey(food) && Mathf.Approximately(GameManager.Instance.cookingFoods[food], endTime))
         {
-            playerInventory.AddFood(food, 1);
-            playerInventory.cookingFoods.Remove(food);
+            GameManager.Instance.AddFood(food, 1);
+            GameManager.Instance.cookingFoods.Remove(food);
             Debug.Log("Finished cooking: " + food.FoodName);
         }
     }
